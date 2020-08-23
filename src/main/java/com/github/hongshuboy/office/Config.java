@@ -14,9 +14,11 @@ public interface Config {
     Map<String, String> getElMap();
 
     /**
-     * 表格插入的数据，Key是表格名，需要在表头的第一列设置 tableName#column
-     * 之后工具会用tableName作为Key，对该map取值
-     * map的Value是List集合，拿到该集合后，在word中对相应的表格进行插入
+     * <p>表格插入的数据，Key是表格名，需要在表头的第一列设置 tableName#column
+     * 之后工具会用tableName作为Key，对该map取值</p>
+     * <p>map的Value是List集合，拿到该集合后，在word中对相应的表格进行插入</p>
+     * <p>List中的元素类型是String数组，每一个数组中的元素对应一个word表格中的单元格，
+     * 如果使用#b标记的，会被工具解析并且生成为加粗字体，如#b:A0123</p>
      */
     Map<String, List<String[]>> getTableData();
 }
