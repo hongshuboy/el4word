@@ -1,8 +1,7 @@
 package com.github.jteam.test;
 
-import com.github.hongshuboy.core.EL4J;
+import com.github.hongshuboy.lang.EL4J;
 import com.github.hongshuboy.lang.StringUtils;
-import com.github.hongshuboy.lang.WordConst;
 import org.apache.poi.xwpf.usermodel.*;
 import org.junit.Test;
 
@@ -18,14 +17,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * 所有操作指令，如替换${a}，或表格名定义tableAlias#column与加粗指令#b:column，都必须在一个域中
+ * 请先在TXT文本中键入这些指令，之后完整复制到word文件中，不要手敲，否则可能出现无法匹配的异常
+ *
  * @author wp
  * 2020-08-21 09:16
  */
 public class POITest {
+    private static final String B = "#b";
+    private static final String SHAPE = "#";
+    private static final String DOLLAR = "$";
 
-    private void test11(){
-        StringUtils.notEmpty(WordConst.SHAPE);
-    }
     /**
      * 替换表格对象方法
      *
@@ -34,14 +36,14 @@ public class POITest {
      * @param tableData 需要插入的表格信息集合
      */
     public static void transformTable(XWPFDocument document, Map<String, String> elMap,
-                                      HashMap<String, List<String[]>> tableData) {
+                                      Map<String, List<String[]>> tableData) {
         //获取表格对象集合
         List<XWPFTable> tables = document.getTables();
         for (XWPFTable table : tables) {
-            //只处理行数大于等于2的表格，且不循环表头
+            //只处理行数大于等于1的表格，且不循环表头
             if (table.getRows().size() >= 1) {
                 //判断表格是需要替换还是需要插入，判断逻辑有$为替换，表格无$为插入
-                if (table.getText() != null && table.getText().contains(WordConst.DOLLAR)) {
+                if (table.getText() != null && table.getText().contains(DOLLAR)) {
                     List<XWPFTableRow> rows = table.getRows();
                     //遍历表格,并替换模板
                     eachTable(rows, elMap);
@@ -63,7 +65,7 @@ public class POITest {
             List<XWPFTableCell> cells = row.getTableCells();
             for (XWPFTableCell cell : cells) {
                 //判断单元格是否需要替换
-                if (cell.getText() != null && cell.getText().contains(WordConst.DOLLAR)) {
+                if (cell.getText() != null && cell.getText().contains(DOLLAR)) {
                     List<XWPFParagraph> paragraphs = cell.getParagraphs();
                     for (XWPFParagraph paragraph : paragraphs) {
                         List<XWPFRun> runs = paragraph.getRuns();
@@ -102,7 +104,7 @@ public class POITest {
                 if (cell.getParagraphs().size() > 1) {
                     cell.removeParagraph(0);
                 }
-                if (text.contains("#b")) {
+                if (text.contains(B)) {
                     run.setText(text.split(":")[1], 0);
                     run.setBold(true);
                 } else {
@@ -115,7 +117,7 @@ public class POITest {
 
     private static String prepareTableName(List<XWPFTableRow> rows) {
         String title = rows.get(0).getTableCells().get(0).getText();
-        if (title.contains(WordConst.SHAPE)) {
+        if (title.contains(SHAPE)) {
             //表头只准有一个段落（这里表头指第一行第一列）
             XWPFTableCell cell = rows.get(0).getTableCells().get(0);
             for (XWPFParagraph paragraph : cell.getParagraphs()) {
@@ -124,8 +126,8 @@ public class POITest {
                     if (!StringUtils.notEmpty(text)) {
                         continue;
                     }
-                    if (text.contains(WordConst.SHAPE)) {
-                        run.setText(text.substring(text.indexOf(WordConst.SHAPE) + 1), 0);
+                    if (text.contains(SHAPE)) {
+                        run.setText(text.substring(text.indexOf(SHAPE) + 1), 0);
                     }
                 }
             }
@@ -133,7 +135,11 @@ public class POITest {
             throw new RuntimeException("插入模式下，必须规定表格名称，如t1#title");
         }
         //return table name
-        return title.split(WordConst.SHAPE)[0];
+        return title.split(SHAPE)[0];
+    }
+
+    private void test11() {
+        StringUtils.notEmpty(SHAPE);
     }
 
     @Test
@@ -180,7 +186,7 @@ public class POITest {
         list.add(new String[]{"A0123", "烟台", "芝罘", "678", "2020-08-21", "1", "pm2.5", "3"});
         ArrayList<String[]> list2 = new ArrayList<>();
         list2.add(new String[]{"1", "2", "3", "4", "5", "#b:6"});
-        HashMap<String, List<String[]>> tableData = new HashMap<>();
+        Map<String, List<String[]>> tableData = new HashMap<>();
         tableData.put("t1", list);
         tableData.put("t2", list2);
 
@@ -208,7 +214,7 @@ public class POITest {
     private void transformWord(XWPFDocument document, Map<String, String> elMap) throws IOException {
         List<XWPFParagraph> paragraphs = document.getParagraphs();
         paragraphs.forEach((paragraph) -> {
-            if (paragraph.getText() != null && paragraph.getText().contains(WordConst.DOLLAR)) {
+            if (paragraph.getText() != null && paragraph.getText().contains(DOLLAR)) {
                 for (XWPFRun run : paragraph.getRuns()) {
                     run.setText(EL4J.replaceByEL(run.getText(0), elMap), 0);
                 }
@@ -222,7 +228,7 @@ public class POITest {
         Map<String, String> params = new HashMap<>();
         prepareParam(params);
         StringBuffer sb = new StringBuffer();
-        Matcher m = Pattern.compile("\\$\\{\\w+\\}").matcher(template);
+        Matcher m = Pattern.compile("\\$\\{\\w+}").matcher(template);
         while (m.find()) {
             String param = m.group();
             String replace = params.get(param.substring(2, param.length() - 1));

@@ -1,4 +1,4 @@
-package com.github.hongshuboy.core;
+package com.github.hongshuboy.lang;
 
 import java.util.Map;
 import java.util.regex.Matcher;
