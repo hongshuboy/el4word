@@ -1,4 +1,4 @@
-package com.github.hongshuboy.lang;
+package com.github.hongshuboy.usermodel;
 
 public class StringUtils {
     public static boolean notEmpty(Object o) {

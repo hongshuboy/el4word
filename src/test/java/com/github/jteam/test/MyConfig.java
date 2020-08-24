@@ -1,7 +1,11 @@
 package com.github.jteam.test;
 
 import com.github.hongshuboy.office.Config;
+import com.github.hongshuboy.usermodel.PictureType;
+import com.github.hongshuboy.usermodel.WordPicture;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,5 +36,16 @@ public class MyConfig implements Config {
         tableData.put("t1", list);
         tableData.put("t2", list2);
         return tableData;
+    }
+
+    @Override
+    public Map<String, WordPicture> getPictures() {
+        Map<String, WordPicture> map = new HashMap<>();
+        try {
+            map.put("img1", new WordPicture(new FileInputStream("C:\\Users\\dell\\Downloads\\flink.jpg"), "flink", 474, 237, PictureType.PICTURE_TYPE_JPEG));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return map;
     }
 }

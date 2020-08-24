@@ -1,4 +1,4 @@
-package com.github.hongshuboy.lang;
+package com.github.hongshuboy.usermodel;
 
 public class Tuple<A, B> {
     public final A left;

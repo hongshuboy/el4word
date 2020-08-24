@@ -1,4 +1,4 @@
-package com.github.hongshuboy.lang;
+package com.github.hongshuboy.usermodel;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -28,7 +28,7 @@ public class EL4J {
         while (m.find()) {
             String param = m.group();
             String replace = elMap.get(param.substring(2, param.length() - 1));
-            m.appendReplacement(sb, replace == null ? "[" + param.substring(2, param.length() - 1) + "]" : replace);
+            m.appendReplacement(sb, replace == null ? "\\${" + param.substring(2, param.length() - 1) + "}" : replace);
         }
         m.appendTail(sb);
         return sb.toString();

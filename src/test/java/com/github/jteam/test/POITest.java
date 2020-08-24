@@ -1,7 +1,7 @@
 package com.github.jteam.test;
 
-import com.github.hongshuboy.lang.EL4J;
-import com.github.hongshuboy.lang.StringUtils;
+import com.github.hongshuboy.usermodel.EL4J;
+import com.github.hongshuboy.usermodel.StringUtils;
 import org.apache.poi.xwpf.usermodel.*;
 import org.junit.Test;
 

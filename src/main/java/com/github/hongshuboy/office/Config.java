@@ -1,5 +1,7 @@
 package com.github.hongshuboy.office;
 
+import com.github.hongshuboy.usermodel.WordPicture;
+
 import java.util.List;
 import java.util.Map;
 
@@ -21,4 +23,9 @@ public interface Config {
      * 如果使用#b标记的，会被工具解析并且生成为加粗字体，如#b:A0123</p>
      */
     Map<String, List<String[]>> getTableData();
+
+    /**
+     * 设置准备插入的图片
+     */
+    Map<String, WordPicture> getPictures();
 }

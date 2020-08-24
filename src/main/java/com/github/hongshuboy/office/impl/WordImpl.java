@@ -1,13 +1,18 @@
 package com.github.hongshuboy.office.impl;
 
-import com.github.hongshuboy.lang.EL4J;
-import com.github.hongshuboy.lang.StringUtils;
+import com.github.hongshuboy.usermodel.EL4J;
+import com.github.hongshuboy.usermodel.StringUtils;
 import com.github.hongshuboy.office.Config;
 import com.github.hongshuboy.office.Sink;
 import com.github.hongshuboy.office.Source;
 import com.github.hongshuboy.office.Word;
+import com.github.hongshuboy.usermodel.WordPicture;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.*;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -15,16 +20,18 @@ public class WordImpl implements Word {
     private static final String B = "#b";
     private static final String SHAPE = "#";
     private static final String DOLLAR = "$";
+    public static final String EMPTY = "";
     private XWPFDocument document;
     private Map<String, String> elMap;
     private Map<String, List<String[]>> tableData;
+    private Map<String, WordPicture> pictureMap;
     private Source source;
     private Sink sink;
 
     private static String prepareTableName(List<XWPFTableRow> rows) {
         String title = rows.get(0).getTableCells().get(0).getText();
         if (title.contains(SHAPE)) {
-            //表头只准有一个段落（这里表头指第一行第一列）
+            //第一行第一列只准有一个段落
             XWPFTableCell cell = rows.get(0).getTableCells().get(0);
             for (XWPFParagraph paragraph : cell.getParagraphs()) {
                 for (XWPFRun run : paragraph.getRuns()) {
@@ -58,6 +65,7 @@ public class WordImpl implements Word {
     public void addConfig(Config config) {
         elMap = config.getElMap();
         tableData = config.getTableData();
+        pictureMap = config.getPictures();
     }
 
     @Override
@@ -72,10 +80,58 @@ public class WordImpl implements Word {
         transformTables(elMap, tableData);
     }
 
+    @Override
+    public void transformPictures() {
+        loadDocument();
+        transformPictures(pictureMap);
+    }
+
     private void loadDocument() {
         if (document == null) {
             document = source.getDocument();
         }
+    }
+
+    public void transformPictures(Map<String, WordPicture> pictureMap) {
+        List<XWPFParagraph> paragraphs = document.getParagraphs();
+        paragraphs.forEach((paragraph) -> {
+            if (paragraph.getText() != null && paragraph.getText().contains(DOLLAR)) {
+                for (XWPFRun run : paragraph.getRuns()) {
+                    WordPicture wordPicture = getWordPicture(pictureMap, run);
+                    if (wordPicture != null) {
+                        // insert picture
+                        run.setText(EMPTY, 0);
+                        try (InputStream inputStream = wordPicture.getInputStream()) {
+                            run.addPicture(inputStream,
+                                    wordPicture.getPictureType(),
+                                    wordPicture.getFileName(),
+                                    Units.pixelToEMU(wordPicture.getWidthPx()),
+                                    Units.pixelToEMU(wordPicture.getHeightPx()));
+                        } catch (InvalidFormatException | IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 匹配当前区域是否可替换为图片
+     *
+     * @param pictureMap 图片变量
+     * @param run        区域
+     */
+    private WordPicture getWordPicture(Map<String, WordPicture> pictureMap, XWPFRun run) {
+        String text = run.getText(0);
+        if (StringUtils.notEmpty(text)) {
+            for (Map.Entry<String, WordPicture> entry : pictureMap.entrySet()) {
+                if (text.contains(entry.getKey())) {
+                    return entry.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -147,7 +203,6 @@ public class WordImpl implements Word {
      * @param tableData table的数据集合
      */
     private void insertTable(XWPFTable table, Map<String, List<String[]>> tableData) {
-        //遍历表格插入数据
         List<XWPFTableRow> rows = table.getRows();
         //获取表头的第一个cell，匹配表格名称
         String tableName = prepareTableName(rows);

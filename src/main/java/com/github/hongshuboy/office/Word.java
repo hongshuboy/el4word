@@ -53,6 +53,11 @@ public interface Word {
     void transformTables();
 
     /**
+     * 将word段落与标题中的${xx}变量替换为图片，替换会保留原格式（如居中）
+     */
+    void transformPictures();
+
+    /**
      * 保存文件
      */
     void save();
