@@ -1,9 +1,5 @@
 package com.github.hongshuboy.office;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.github.hongshuboy.office.impl.FileSink;
 import com.github.hongshuboy.office.impl.FileSource;
 
