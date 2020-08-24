@@ -13,15 +13,6 @@ import com.github.hongshuboy.office.impl.FileSource;
  */
 public interface Word {
     /**
-     * 空的配置
-     */
-    Map<String, String> emptyElMap = Collections.emptyMap();
-    /**
-     * 空的配置
-     */
-    Map<String, List<String[]>> emptyTableData = Collections.emptyMap();
-
-    /**
      * 添加读取文件的方式
      *
      * @param source 可自定义，或者是{@link FileSource}

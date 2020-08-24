@@ -2,6 +2,7 @@ package com.github.hongshuboy.office;
 
 import com.github.hongshuboy.usermodel.WordPicture;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +14,9 @@ public interface Config {
     /**
      * 获取EL的配置
      */
-    Map<String, String> getElMap();
+    default Map<String, String> getElMap(){
+        return Collections.emptyMap();
+    }
 
     /**
      * <p>表格插入的数据，Key是表格名，需要在表头的第一列设置 tableName#column
@@ -22,10 +25,14 @@ public interface Config {
      * <p>List中的元素类型是String数组，每一个数组中的元素对应一个word表格中的单元格，
      * 如果使用#b标记的，会被工具解析并且生成为加粗字体，如#b:A0123</p>
      */
-    Map<String, List<String[]>> getTableData();
+    default Map<String, List<String[]>> getTableData(){
+        return Collections.emptyMap();
+    }
 
     /**
      * 设置准备插入的图片
      */
-    Map<String, WordPicture> getPictures();
+    default Map<String, WordPicture> getPictures(){
+        return Collections.emptyMap();
+    }
 }
