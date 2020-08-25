@@ -24,12 +24,12 @@ public class WordTest {
     }
 
     @Test
-    public void test2(){
+    public void test2() {
         HashMap<String, String> map = new HashMap<>();
-        map.put("1","A");
-        map.put("2","B");
+        map.put("1", "A");
+        map.put("2", "B");
         map.put("1", "C");
-        map.forEach((k,v) -> {
+        map.forEach((k, v) -> {
             System.out.println(k + " " + v);
         });
     }

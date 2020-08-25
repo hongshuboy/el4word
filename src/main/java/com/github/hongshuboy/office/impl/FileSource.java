@@ -9,11 +9,14 @@ import java.io.IOException;
 
 /**
  * 从磁盘中加载Word模板文件，用于转换
+ *
+ * @author hongshuboy
  */
 public class FileSource implements Source {
     private String docPath;
 
-    private FileSource() {}
+    private FileSource() {
+    }
 
     public FileSource(String docPath) {
         this.docPath = docPath;
@@ -21,7 +24,7 @@ public class FileSource implements Source {
 
     @Override
     public XWPFDocument getDocument() {
-        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(docPath));) {
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(docPath))) {
             return new XWPFDocument(inputStream);
         } catch (IOException e) {
             e.printStackTrace();

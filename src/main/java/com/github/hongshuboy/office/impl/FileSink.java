@@ -9,11 +9,14 @@ import java.io.IOException;
 
 /**
  * 将文档写出到磁盘
+ *
+ * @author hongshuboy
  */
 public class FileSink implements Sink {
     private String outPath;
 
-    private FileSink() {}
+    private FileSink() {
+    }
 
     public FileSink(String outPath) {
         this.outPath = outPath;
@@ -21,7 +24,7 @@ public class FileSink implements Sink {
 
     @Override
     public void storeDocument(XWPFDocument document) {
-        try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outPath));) {
+        try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outPath))) {
             document.write(outputStream);
         } catch (IOException e) {
             e.printStackTrace();

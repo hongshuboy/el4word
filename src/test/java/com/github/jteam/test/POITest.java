@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * 所有操作指令，如替换${a}，或表格名定义tableAlias#column与加粗指令#b:column，都必须在一个域中
  * 请先在TXT文本中键入这些指令，之后完整复制到word文件中，不要手敲，否则可能出现无法匹配的异常
  *
- * @author wp
+ * @author hongshuboy
  * 2020-08-21 09:16
  */
 public class POITest {

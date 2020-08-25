@@ -9,12 +9,14 @@ import java.util.Map;
 /**
  * 配置类，对Word的变量定义都在这里
  * 实现该接口后，可以实现多种配置源的接入，如实现一个JDBCConfig，可从数据库读取配置
+ *
+ * @author hongshuboy
  */
 public interface Config {
     /**
      * 获取EL的配置
      */
-    default Map<String, String> getElMap(){
+    default Map<String, String> getElMap() {
         return Collections.emptyMap();
     }
 
@@ -25,14 +27,14 @@ public interface Config {
      * <p>List中的元素类型是String数组，每一个数组中的元素对应一个word表格中的单元格，
      * 如果使用#b标记的，会被工具解析并且生成为加粗字体，如#b:A0123</p>
      */
-    default Map<String, List<String[]>> getTableData(){
+    default Map<String, List<String[]>> getTableData() {
         return Collections.emptyMap();
     }
 
     /**
      * 设置准备插入的图片
      */
-    default Map<String, WordPicture> getPictures(){
+    default Map<String, WordPicture> getPictures() {
         return Collections.emptyMap();
     }
 }

@@ -16,6 +16,9 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author hongshuboy
+ */
 public class WordImpl implements Word {
     private static final String B = "#b";
     private static final String SHAPE = "#";

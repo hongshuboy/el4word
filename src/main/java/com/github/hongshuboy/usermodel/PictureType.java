@@ -2,6 +2,7 @@ package com.github.hongshuboy.usermodel;
 
 /**
  * 定义图片类型，{@link org.apache.poi.xwpf.usermodel.Document}
+ *
  * @author hongshuboy
  * 2020-08-24 10:34
  */

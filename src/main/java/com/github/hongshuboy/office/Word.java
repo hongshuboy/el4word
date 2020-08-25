@@ -6,6 +6,8 @@ import com.github.hongshuboy.office.impl.FileSource;
 /**
  * 常见问题：
  * 1.插入的表格没有边框 - 在读入的模板文件中，将边框样式设置好，选择全部边框
+ *
+ * @author hongshuboy
  */
 public interface Word {
     /**
