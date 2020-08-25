@@ -23,7 +23,7 @@ public class WordImpl implements Word {
     private static final String B = "#b";
     private static final String SHAPE = "#";
     private static final String DOLLAR = "$";
-    public static final String EMPTY = "";
+    private static final String EMPTY = "";
     private XWPFDocument document;
     private Map<String, String> elMap;
     private Map<String, List<String[]>> tableData;

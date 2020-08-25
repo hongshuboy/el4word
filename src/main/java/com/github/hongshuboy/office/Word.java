@@ -13,7 +13,7 @@ public interface Word {
     /**
      * 添加读取文件的方式
      *
-     * @param source 可自定义，或者是{@link FileSource}
+     * @param source 可自定义，或使用{@link FileSource}
      */
     void addSource(Source source);
 
