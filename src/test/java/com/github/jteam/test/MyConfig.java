@@ -1,9 +1,12 @@
 package com.github.jteam.test;
 
+import com.github.hongshuboy.jcharts.BarChart;
 import com.github.hongshuboy.office.Config;
 import com.github.hongshuboy.usermodel.PictureType;
 import com.github.hongshuboy.usermodel.WordPicture;
+import org.jfree.data.category.DefaultCategoryDataset;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -42,10 +45,37 @@ public class MyConfig implements Config {
     public Map<String, WordPicture> getPictures() {
         Map<String, WordPicture> map = new HashMap<>();
         try {
-            map.put("img1", new WordPicture(new FileInputStream("C:\\Users\\dell\\Downloads\\flink.jpg"), "flink", 474, 237, PictureType.PICTURE_TYPE_JPEG));
+            map.put("img1", WordPicture.of(new FileInputStream("D:\\poi\\spring.jpg"), "flink", 474, 237, PictureType.PICTURE_TYPE_JPEG));
+            ByteArrayInputStream inputStream = loadOneChart();
+            map.put("img2", WordPicture.of(inputStream, "", 474, 237, PictureType.PICTURE_TYPE_JPEG));
         } catch (Exception e) {
             e.printStackTrace();
         }
         return map;
+    }
+
+    private ByteArrayInputStream loadOneChart() throws Exception {
+        BarChart chart = new BarChart();
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        dataset.addValue(1, "x", "A地区");
+        dataset.addValue(2, "y", "A地区");
+        dataset.addValue(2, "z", "A地区");
+
+
+        dataset.addValue(1, "x", "B地区");
+        dataset.addValue(2, "y", "B地区");
+        dataset.addValue(2, "z", "B地区");
+
+
+        dataset.addValue(1, "x", "C地区");
+        dataset.addValue(2, "y", "C地区");
+        dataset.addValue(2, "z", "C地区");
+
+
+        dataset.addValue(1, "x", "D地区");
+        dataset.addValue(2, "y", "D地区");
+        dataset.addValue(1.5, "z", "D地区");
+
+        return chart.makeBarChart(dataset, "图表标题", "x标题", "y标题");
     }
 }
