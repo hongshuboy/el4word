@@ -30,14 +30,15 @@ public class MyConfig implements Config {
     @Override
     public Map<String, List<String[]>> getTableData() {
         ArrayList<String[]> list = new ArrayList<>();
-        list.add(new String[]{"#b:A0123", "烟台", "#b:蓬莱", "678", "2020-08-21", "1", "pm2.5", "1"});
-        list.add(new String[]{"A0123", "烟台", "芝罘", "678", "2020-08-21", "1", "pm2.5", "3"});
+        list.add(new String[]{"#b:A0123", "美国", "#b:华盛顿", "小雨"});
+        list.add(new String[]{"A0124", "台湾", "台北", "晴"});
+        list.add(new String[]{"A0125", "日本", "东京", "晴"});
+        Map<String, List<String[]>> tableData = new HashMap<>();
+        tableData.put("t1", list);//表格1
         ArrayList<String[]> list2 = new ArrayList<>();
         list2.add(new String[]{"1", "2", "3", "4", "5", "#b:6"});
         list2.add(new String[]{"#b:11", "22", "33", "44", "55", "#b:66"});
-        Map<String, List<String[]>> tableData = new HashMap<>();
-        tableData.put("t1", list);
-        tableData.put("t2", list2);
+        tableData.put("t2", list2);//表格2
         return tableData;
     }
 
