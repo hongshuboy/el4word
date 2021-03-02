@@ -1,11 +1,11 @@
 package com.github.hongshuboy.office.impl;
 
-import com.github.hongshuboy.usermodel.EL4J;
-import com.github.hongshuboy.usermodel.StringUtils;
 import com.github.hongshuboy.office.Config;
 import com.github.hongshuboy.office.Sink;
 import com.github.hongshuboy.office.Source;
 import com.github.hongshuboy.office.Word;
+import com.github.hongshuboy.usermodel.EL4J;
+import com.github.hongshuboy.usermodel.StringUtils;
 import com.github.hongshuboy.usermodel.WordPicture;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * WordImpl
+ *
  * @author hongshuboy
  */
 public class WordImpl implements Word {

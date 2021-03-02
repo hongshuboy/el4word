@@ -66,6 +66,10 @@ public class WordPicture {
         this.pictureType = pictureType;
     }
 
+    public static WordPicture of(InputStream inputStream, String fileName, int widthPx, int heightPx, int pictureType) {
+        return new WordPicture(inputStream, fileName, widthPx, heightPx, pictureType);
+    }
+
     public void setBytes(InputStream inputStream) {
         try {
             bytes = IOUtils.toByteArray(inputStream);
