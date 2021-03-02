@@ -10,7 +10,7 @@
 - [x] EL表达式风格，使用门槛低
 - [x] 扩展性支持，例如读写`word`如有需要，在自定义后，甚至可以远程读取、加密等
 
-### 使用效果展示：
+## 效果展示：
 
 **转换前的样子：**
 
@@ -26,7 +26,9 @@
 
 <img src="README.assets/image-20210301231537321.png" style="border:5px solid black"/>
 
-### 使用
+## 使用方式
+
+*可以参考源码`test`目录下的示例，使用到的资源文件在`test/resources`下*
 
 ```java
 Word word = Office.getWordHandler();
@@ -60,7 +62,7 @@ System.out.println("transform success!");
 
 也就是说，变量的样式会在最终得到保留，用户可依据此特性设置一个漂亮的模板和目标`word`文件
 
-**读取模板文件：**
+**Source 读取模板文件：**
 
 实例代码中添加模板文件到程序的方式是通过：
 
@@ -72,6 +74,8 @@ System.out.println("transform success!");
  */
 void addSource(Source source);
 ```
+
+**Sink 输出转换后的Word**
 
 需要实现`com.github.hongshuboy.office.Source`，默认有一个本地文件的实现`com.github.hongshuboy.office.impl.FileSource`，若有其他需要可以自定义。
 
@@ -86,7 +90,9 @@ void addSource(Source source);
 void addSink(Sink sink);
 ```
 
-配置Config规则，这里是变量转换的关键
+**Config 配置变量**
+
+配置`Config`规则，这里是变量转换的关键
 
 ```java
 /**
@@ -97,7 +103,142 @@ void addSink(Sink sink);
 void addConfig(Config config);
 ```
 
+`Config`没有默认实现，使用时需要实现`com.github.hongshuboy.office.Config`接口
+
+```java
+/**
+ * 配置类，对Word的变量定义都在这里
+ * 实现该接口后，可以实现多种配置源的接入，如实现一个JDBCConfig，可从数据库读取配置
+ */
+public interface Config {
+    /**
+     * 获取EL的配置
+     */
+    default Map<String, String> getElMap(){
+        return Collections.emptyMap();
+    }
+
+    /**
+     * <p>表格插入的数据，Key是表格名，需要在表头的第一列设置 tableName#column
+     * 之后工具会用tableName作为Key，对该map取值</p>
+     * <p>map的Value是List集合，拿到该集合后，在word中对相应的表格进行插入</p>
+     * <p>List中的元素类型是String数组，每一个数组中的元素对应一个word表格中的单元格，
+     * 如果使用#b标记的，会被工具解析并且生成为加粗字体，如#b:A0123</p>
+     */
+    default Map<String, List<String[]>> getTableData(){
+        return Collections.emptyMap();
+    }
+
+    /**
+     * 设置准备插入的图片
+     */
+    default Map<String, WordPicture> getPictures(){
+        return Collections.emptyMap();
+    }
+}
+```
+
+- `getElMap`为EL表达式的转换规则
+- `getTableData`为表格的转换规则，如果表格中使用EL表达式如`${name}`，将执行替换模式，使用`ELMap`的转换规则，如果表格中不存在`${xx}`，将执行插入模式，对匹配到的表名进行插入。返回值`key`为表名，`value`为带插入的表格内容。插入模式时，表格第一个单元格必须匹配`table-name#xxx`的格式（请参考最开始的演示截图），`#`之前的为表格名，如下`t1`和`t2`是表格名，用于标识匹配的表格。
+- `getPictures`图片的转换规则，同样使用`EL`表达式，匹配到后使用图片文件替换，所以这里的`EL`变量应该唯一，不能和段落的变量重复。
+
+```java
+public class MyConfig implements Config {
+    @Override
+    public Map<String, String> getElMap() {
+        Map<String, String> elMap = new HashMap<>();
+        elMap.put("name", "小兰");
+        elMap.put("weather", "晴天");
+        return elMap;
+    }
+
+    @Override
+    public Map<String, List<String[]>> getTableData() {
+        ArrayList<String[]> list = new ArrayList<>();
+        list.add(new String[]{"#b:A0123", "美国", "#b:华盛顿", "小雨"});
+        list.add(new String[]{"A0124", "台湾", "台北", "晴"});
+        list.add(new String[]{"A0125", "日本", "东京", "晴"});
+        Map<String, List<String[]>> tableData = new HashMap<>();
+        tableData.put("t1", list);//表格1
+        ArrayList<String[]> list2 = new ArrayList<>();
+        list2.add(new String[]{"1", "2", "3", "4", "5", "#b:6"});
+        list2.add(new String[]{"#b:11", "22", "33", "44", "55", "#b:66"});
+        tableData.put("t2", list2);//表格2
+        return tableData;
+    }
+
+    @Override
+    public Map<String, WordPicture> getPictures() {
+        Map<String, WordPicture> map = new HashMap<>();
+        try {
+            map.put("img1", WordPicture.of(new FileInputStream("D:\\poi\\spring.jpg"), "flink", 474, 237, PictureType.PICTURE_TYPE_JPEG));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return map;
+    }
+}
+```
+
+**文章开头的示例图片中，最下面的图标是如何生成的**
+
+实际上这里是生成了一个表格的图片，然后对图片进行插入，所以需要的话，配置应该在`getPictures`内。因为`WordPicture`只需要图片的输入流，所以使用其他方式生成图表同样支持，可以灵活扩展。
+
+```java
+@Override
+public Map<String, WordPicture> getPictures() {
+    Map<String, WordPicture> map = new HashMap<>();
+    try {
+        map.put("img1", WordPicture.of(new FileInputStream("D:\\poi\\spring.jpg"), "flink", 474, 237, PictureType.PICTURE_TYPE_JPEG));
+        //生成图表
+        ByteArrayInputStream inputStream = loadOneChart();
+        //图片变量替换
+        map.put("img2", WordPicture.of(inputStream, "", 474, 237, PictureType.PICTURE_TYPE_JPEG));
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return map;
+}
+
+private ByteArrayInputStream loadOneChart() throws Exception {
+    BarChart chart = new BarChart();
+    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+    dataset.addValue(1, "x", "A地区");
+    dataset.addValue(2, "y", "A地区");
+    dataset.addValue(2, "z", "A地区");
 
 
+    dataset.addValue(1, "x", "B地区");
+    dataset.addValue(2, "y", "B地区");
+    dataset.addValue(2, "z", "B地区");
 
+
+    dataset.addValue(1, "x", "C地区");
+    dataset.addValue(2, "y", "C地区");
+    dataset.addValue(2, "z", "C地区");
+
+
+    dataset.addValue(1, "x", "D地区");
+    dataset.addValue(2, "y", "D地区");
+    dataset.addValue(1.5, "z", "D地区");
+
+    return chart.makeBarChart(dataset, "图表标题", "x标题", "y标题");
+}
+```
+
+## 作者 Author
+
+弘树丶
+
+> wangpeng(hongshu)
+
+Email:hongshuboy@gmail.com
+
+## 版权说明 License 
+
+本项目使用**Apache License 2.0**授权许可，详情请参阅 ***\LICENSE*** 和 ***\NOTICE***
+
+*hongshuboy/HuffmanZip is licensed under the Apache License 2.0,please read LICENSE and NOTICE for more information*
+
+Copyright ©2020 wangpeng(hongshu)
 
