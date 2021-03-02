@@ -2,6 +2,11 @@
 
 **el4word**能够读取模板`word`文件，并对其中的标识进行识别和替换，最终生成完整的`word`。它适合周期性的生成同类型`word`报告的情况，将繁琐的操作交由程序动态生成，减少人力成本。
 
+| License                                        | Code Beat                                                    | Language                                                     | Build                                                        | Size                                                         | Contributors                                                 |
+| ---------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ![Hex.pm](https://img.shields.io/hexpm/l/plug) | [![codebeat badge](https://codebeat.co/badges/02c39194-6daa-46e3-b27f-0a57bdb3c540)](https://codebeat.co/projects/github-com-hongshuboy-el4word-master) | ![language java](<https://img.shields.io/badge/java-v1.8-blue>) | ![GitHub release (latest by date)](https://img.shields.io/github/v/release/hongshuboy/el4word) | ![GitHub repo size](https://img.shields.io/github/repo-size/hongshuboy/el4word) | ![GitHub contributors](https://img.shields.io/github/contributors/hongshuboy/el4word) |
+
+
 - [x] 支持文字转换
 - [x] 支持图片替换
 - [x] 支持表格插入与替换
