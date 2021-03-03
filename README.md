@@ -243,7 +243,7 @@ Email:hongshuboy@gmail.com
 
 本项目使用**Apache License 2.0**授权许可，详情请参阅 ***\LICENSE*** 和 ***\NOTICE***
 
-*hongshuboy/HuffmanZip is licensed under the Apache License 2.0,please read LICENSE and NOTICE for more information*
+*hongshuboy/el4word is licensed under the Apache License 2.0,please read LICENSE and NOTICE for more information*
 
 Copyright ©2020 wangpeng(hongshu)
 
